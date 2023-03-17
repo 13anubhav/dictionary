@@ -1,0 +1,186 @@
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dictionary API</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Dictionary API</h1>
+    <form>
+      <label for="term-input">Enter a term:</label>
+      <input type="text" id="term-input" required>
+      <button type="submit">Search</button>
+    </form>
+    <div id="definitions-container"></div>
+    <script src="script.js"></script>
+
+    <style>
+   
+  /* Set some basic styles for the page */
+body {
+  background-color: #f8f8f8;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+/* Style the search form */
+form {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+form label {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+form input[type="text"] {
+  font-size: 18px;
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  border: none;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  max-width: 100%;
+}
+
+form button[type="submit"] {
+  font-size: 18px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #4CAF50;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+form button[type="submit"]:hover {
+  background-color: #3e8e41;
+}
+
+/* Style the definitions container */
+#definitions-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.definition {
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  padding: 20px;
+  max-width: 400px;
+  width: calc(50% - 20px);
+  text-align: center;
+  color: #333;
+}
+
+.definition:nth-child(odd) {
+  margin-right: 20px;
+}
+
+.definition:nth-child(even) {
+  margin-left: 20px;
+}
+
+.definition .word {
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #4CAF50;
+}
+
+.definition .meaning {
+  margin-bottom: 10px;
+  font-size: 18px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.definition .example {
+  font-style: italic;
+  color: #888;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.definition:hover {
+  background-color: #f2f2f2;
+  transition: background-color 0.2s ease-in-out;
+}
+
+
+    </style>
+
+    <script>
+        const API_KEY = 'c3e7e0f9a2msh9541025fef72972p19b90ejsn2b4a44807bbe';
+const URBAN_DICTIONARY_API_URL = 'https://mashape-community-urban-dictionary.p.rapidapi.com/define';
+
+const termInput = document.getElementById('term-input');
+const definitionsContainer = document.getElementById('definitions-container');
+
+// Function to fetch definitions from the API and render them on the page
+async function fetchAndRenderDefinitions(term) {
+  try {
+    // Make a request to the API with the entered term as a parameter
+    const response = await fetch(`${URBAN_DICTIONARY_API_URL}?term=${term}`, {
+      headers: {
+        'X-RapidAPI-Key': API_KEY
+      }
+    });
+    const data = await response.json();
+
+    // Clear the container
+    definitionsContainer.innerHTML = '';
+
+    // Loop through the definitions and render them on the page
+    data.list.forEach(definition => {
+      const definitionDiv = document.createElement('div');
+      definitionDiv.className = 'definition';
+
+      const wordP = document.createElement('p');
+      wordP.className = 'word';
+      wordP.textContent = definition.word;
+      definitionDiv.appendChild(wordP);
+
+      const meaningP = document.createElement('p');
+      meaningP.className = 'meaning';
+      meaningP.innerHTML = definition.definition;
+      definitionDiv.appendChild(meaningP);
+
+      const exampleP = document.createElement('p');
+      exampleP.className = 'example';
+      exampleP.textContent = definition.example;
+      definitionDiv.appendChild(exampleP);
+
+      definitionsContainer.appendChild(definitionDiv);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Event listener for the form submission
+document.querySelector('form').addEventListener('submit', event => {
+  event.preventDefault();
+  const term = termInput.value;
+  fetchAndRenderDefinitions(term);
+});
+
+// Call the fetchAndRenderDefinitions function with a default term
+fetchAndRenderDefinitions('JavaScript');
+
+    </script>
+  </body>
+</html>
